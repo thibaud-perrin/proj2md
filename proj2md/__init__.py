@@ -1,4 +1,6 @@
 """proj2md package initialization."""
 
-__all__ = []
-__version__ = "0.1.0"
+from collections.abc import Sequence
+
+__all__: Sequence[str] = []
+__version__: str = "0.1.0"

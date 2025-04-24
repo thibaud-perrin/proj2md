@@ -3,6 +3,7 @@
 import datetime
 import fnmatch
 import os
+import re
 import subprocess
 import unicodedata
 from pathlib import Path
@@ -16,7 +17,7 @@ except ModuleNotFoundError:
     try:
         import tomli as tomllib  # type: ignore
     except ModuleNotFoundError:
-        tomllib = None
+        tomllib = None  # type: ignore[assignment]
 
 
 def parse_pyproject(input_dir: str) -> dict:
@@ -61,7 +62,9 @@ def get_metadata(input_dir: str) -> dict:  # noqa: PLR0912, PLR0914
             for dep in deps:
                 if isinstance(dep, str):
                     pkg = dep.split()[0]
-                    dependencies.append(pkg)
+                    # Strip version specifiers (e.g. >=, ==, ~=)
+                    name_only = re.split(r"[<>=!~]", pkg, 1)[0]
+                    dependencies.append(name_only)
         authors_meta = project.get("authors", [])
         if isinstance(authors_meta, list):
             for a in authors_meta:
@@ -125,9 +128,15 @@ def generate_tree(root: str, exclude_patterns: list[str] | None = None) -> str:
             prefix (str): Prefix for the current level of the tree.
         """
         try:
-            # list entries, ignoring hidden and generated files/directories
+            # list entries, ignoring hidden, generated, and default-excluded files/dirs
             entries = sorted(
-                e for e in os.listdir(dir_path) if not e.startswith(".") and not e.startswith("generated_")
+                e
+                for e in os.listdir(dir_path)
+                if not e.startswith(".")
+                and not e.startswith("generated_")
+                and not e.endswith(".lock")
+                and not e.endswith(".egg-info")
+                and e != "__pycache__"
             )
         except OSError:
             return
@@ -171,8 +180,8 @@ def find_files(root: str, extensions: list[str] | None, exclude_patterns: list[s
         # prune directories (skip hidden, generated, and excluded)
         pruned = []
         for d in dirnames:
-            # skip hidden or generated dirs
-            if d.startswith((".", "generated_")):
+            # skip hidden, generated, and default-excluded dirs
+            if d.startswith((".", "generated_")) or d == "__pycache__" or d.endswith(".egg-info"):
                 continue
             rel = os.path.join(rel_dir, d) if rel_dir else d
             if exclude_patterns and any(fnmatch.fnmatch(rel, pat) for pat in exclude_patterns):
@@ -181,8 +190,8 @@ def find_files(root: str, extensions: list[str] | None, exclude_patterns: list[s
         dirnames[:] = pruned
         # collect files, skipping hidden and excluded
         for fname in sorted(filenames):
-            # skip hidden and generated files
-            if fname.startswith((".", "generated_")):
+            # skip hidden, generated, and default-excluded files
+            if fname.startswith((".", "generated_")) or fname.endswith((".lock", ".egg-info")):
                 continue
             rel = os.path.join(rel_dir, fname) if rel_dir else fname
             if exclude_patterns and any(fnmatch.fnmatch(rel, pat) for pat in exclude_patterns):

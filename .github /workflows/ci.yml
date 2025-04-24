@@ -1,10 +1,16 @@
 name: CI
 
 on:
+  # 1) On all pushes no matter the branch
+  #    - This will cover your feature/*, patch/*, hotfix/*, etc.
   push:
-    branches: [dev]
+
+  # 2) On all pushes to main
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+
+  # 3) Manual trigger
   workflow_dispatch:
 
 jobs:
