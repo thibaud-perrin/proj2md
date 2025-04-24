@@ -6,7 +6,7 @@
     name            = "proj2md"
     description     = "Generate a comprehensive Markdown document for any project directory via CLI"
     readme          = "README.md"
-    requires-python = ">=3.13"
+    requires-python = ">=3.10"
 
     keywords = [ "llm", "markdown", "project structure" ]
     # Version of the package automatically updated by bump2version (that is why it is separated)
@@ -55,11 +55,9 @@
     [project.entry-points."console_scripts"]
         proj2md = "proj2md.cli:main"
 
-[tool.setuptools]
-    package-dir = { "" = "proj2md" }
-
-    [tool.setuptools.packages.find]
-        where = [ "srcproj2md" ]
+[tool.setuptools.packages.find]
+    where   = [ "." ]
+    include = [ "proj2md*" ]
 
 [tool.ruff]
     src            = [ "proj2md" ]

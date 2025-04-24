@@ -25,19 +25,14 @@ contributions.
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/proj2md.git
+git clone https://github.com/thibaud-perrin/proj2md.git
 cd proj2md
 pip install -e .
 ```
 
 ## Code Style
 
-- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/).
-- Format code with [black](https://github.com/psf/black):
-  ```bash
-  black .
-  ```
-- Lint with [flake8](https://flake8.pycqa.org/).
+Follow ruff configuration present in the pyproject.toml
 
 ## Testing
 
