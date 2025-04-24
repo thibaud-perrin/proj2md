@@ -1,10 +1,40 @@
-# Python-generated files
+# Python bytecode and cache
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
 build/
 dist/
-wheels/
-*.egg-info
+*.egg-info/
 
 # Virtual environments
-.venv
+env/
+venv/
+.venv/
+
+# Lock files
+*.lock
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# Sphinx documentation
+docs/_build/
+
+# Tests and coverage
+.pytest_cache/
+.tox/
+.mypy_cache/
+.coverage
+coverage.xml
+
+# Miscellaneous
+.DS_Store
+*.egg
+*.zip
+*.tar.gz
+
+consignes*.md
+generated*.md
